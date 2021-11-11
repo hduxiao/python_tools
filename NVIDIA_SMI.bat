@@ -1,0 +1,1 @@
+call nvidia-smi.exe -lms 200
