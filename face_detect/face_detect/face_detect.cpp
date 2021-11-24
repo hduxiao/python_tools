@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include <filesystem>
 #include <Windows.h>
 #include "libfacedetection/facedetectcnn.h"
 
@@ -56,13 +57,40 @@ private:
 	double m_current{ 0.0 };
 };
 
-int main()
+static bool doMosaic(cv::Mat img, int msize = 7)
 {
+	for (int i = 0; i < img.cols - msize; i += msize)
+		for (int j = 0; j < img.rows - msize; j += msize)
+		{
+			cv::Rect r = cv::Rect(i, j, msize, msize);
+			cv::Mat mosaic = img(r);
+			mosaic.setTo(cv::mean(mosaic));
+		}
+	return true;
+}
+
+int main(int argc, char* argv[])
+{
+	if (argc != 2)
+	{
+		printf("please input a video!\n");
+		return 0;
+	}
+
+	std::string input_video_path(argv[1]);
+	if (std::filesystem::exists(input_video_path) != true)
+	{
+		printf("video not exist!\n");
+		return 0;
+	}
+
+	std::string output_path = input_video_path + "facedetect.mp4";
+
 	void* result_buffer = malloc(0x20000);
 
 	TimeCounter counter;
 
-	cv::VideoCapture video_cap("C:/Users/NERO/Desktop/video/Ultra_Video_Group/Beauty_1920x1080_30fps_420_8bit_AVC_MP4.mp4");
+	cv::VideoCapture video_cap(input_video_path);
 
 	double fps = video_cap.get(cv::CAP_PROP_FPS);
 	//int height = video_cap.get(cv::CAP_PROP_FRAME_HEIGHT);
@@ -73,7 +101,7 @@ int main()
 	int frame_count = video_cap.get(cv::CAP_PROP_FRAME_COUNT);
 	int fourcc = { cv::CAP_OPENCV_MJPEG };
 
-	cv::VideoWriter video_writer("C:/Users/NERO/Desktop/test.mp4", fourcc, fps, frame_size);
+	cv::VideoWriter video_writer(output_path, fourcc, fps, frame_size);
 
 	cv::Mat sample;
 	cv::Mat output;
@@ -104,8 +132,17 @@ int main()
 			int w = (int)p[3];
 			int h = (int)p[4];
 
-			cv::rectangle(output, cv::Point(x, y), cv::Point(x + w, y + h), cv::Scalar(0, 255, 0));
-			cv::putText(output, std::to_string(score), cv::Point(x, y + 15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
+			cv::Rect rect{};
+			rect.x = x;
+			rect.y = y;
+			rect.width = w;
+			rect.height = h;
+
+			cv::Mat roi = output(rect);
+			doMosaic(roi);
+
+			//cv::rectangle(output, cv::Point(x, y), cv::Point(x + w, y + h), cv::Scalar(0, 255, 0));
+			//cv::putText(output, std::to_string(score), cv::Point(x, y + 15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
 
 			printf("x: %d y: %d w: %d h: %d\n", x, y, w, h);
 		}
