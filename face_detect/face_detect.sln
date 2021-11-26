@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "face_detect", "face_detect\face_detect.vcxproj", "{6DF11013-B33D-47B6-B2A5-173639155983}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "face_detect_contrast", "face_detect_contrast\face_detect_contrast.vcxproj", "{9D07B4BE-4B6D-4D93-BCD3-923B8684C1AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{6DF11013-B33D-47B6-B2A5-173639155983}.Debug|x64.Build.0 = Debug|x64
 		{6DF11013-B33D-47B6-B2A5-173639155983}.Release|x64.ActiveCfg = Release|x64
 		{6DF11013-B33D-47B6-B2A5-173639155983}.Release|x64.Build.0 = Release|x64
+		{9D07B4BE-4B6D-4D93-BCD3-923B8684C1AA}.Debug|x64.ActiveCfg = Debug|x64
+		{9D07B4BE-4B6D-4D93-BCD3-923B8684C1AA}.Debug|x64.Build.0 = Debug|x64
+		{9D07B4BE-4B6D-4D93-BCD3-923B8684C1AA}.Release|x64.ActiveCfg = Release|x64
+		{9D07B4BE-4B6D-4D93-BCD3-923B8684C1AA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
