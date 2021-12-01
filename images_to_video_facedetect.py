@@ -50,6 +50,31 @@ def visualize(image, faces, print_flag=False, fps=None):
     return output
 
 
+# def images_facedetect(images_path):
+#     images = find_images(images_path)
+#     images_count = len(images)
+#     if images_count == 0:
+#         print("there are no images under this path!")
+#         exit()
+
+#     # Instantiate yunet
+#     yunet = cv2.FaceDetectorYN.create(
+#         model="./yunet.onnx",
+#         config='',
+#         input_size=(output_width, output_height),
+#         score_threshold=0.9,
+#         nms_threshold=0.3,
+#         top_k=5000,
+#         backend_id=cv2.dnn.DNN_BACKEND_CUDA,
+#         target_id=cv2.dnn.DNN_TARGET_CUDA
+#     )
+
+#     progress_bar = tqdm(range(images_count), ncols=100)
+#     for i in progress_bar:
+#         sample = cv2.imread(images[i])
+#         output_path = os.path.basename(images_path) + '.jpg'
+
+
 def images_to_video(images_path):
     images = find_images(images_path)
     images_count = len(images)
@@ -78,19 +103,19 @@ def images_to_video(images_path):
     progress_bar = tqdm(range(images_count), ncols=100)
     for i in progress_bar:
         sample = cv2.imread(images[i])
-        height, width, channels = sample.shape
+        # height, width, channels = sample.shape
 
-        facedetect_results = []
-        yunet.setInputSize((width, height))
-        _, facedetect_results = yunet.detect(sample)
+        # facedetect_results = []
+        # yunet.setInputSize((width, height))
+        # _, facedetect_results = yunet.detect(sample)
 
-        if not facedetect_results is None:
-            print(facedetect_results)
-            output = visualize(sample, facedetect_results)
-        else:
-            output = sample
+        # if not facedetect_results is None:
+        #     print(facedetect_results)
+        #     output = visualize(sample, facedetect_results)
+        # else:
+        #     output = sample
 
-        sample = cv2.resize(output, (output_width, output_height), interpolation = cv2.INTER_CUBIC)
+        sample = cv2.resize(sample, (output_width, output_height), interpolation = cv2.INTER_CUBIC)
         output_writer.write(sample)
 
 
@@ -106,7 +131,9 @@ def main():
 
     dirlist = find_subdir(images_path)
     for dir in dirlist:
+        # images_facedetect(dir)
         images_to_video(dir)
+        break
         
 
 if __name__ == "__main__":

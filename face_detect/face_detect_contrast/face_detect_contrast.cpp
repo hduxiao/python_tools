@@ -78,6 +78,7 @@ int main()
 		}
 
 		std::cout << Boxs.size() << std::endl;
+		break;
 	} while (1);
 
 }
