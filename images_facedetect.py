@@ -4,6 +4,44 @@ import os
 from tqdm import tqdm
 import cv2
 import numpy as np
+from insightface.app import FaceAnalysis
+from insightface.data import get_image as ins_get_image
+
+
+# Instantiate yunet
+yunet = cv2.FaceDetectorYN.create(
+    model="./yunet.onnx",
+    config='',
+    input_size=(1920, 1080),
+    score_threshold=0.9,
+    nms_threshold=0.3,
+    top_k=5000,
+    backend_id=cv2.dnn.DNN_BACKEND_CUDA,
+    target_id=cv2.dnn.DNN_TARGET_CUDA
+)
+
+def opencv(image):
+    height = image.shape[0]
+    width = image.shape[1]
+    facedetect_results = []
+    yunet.setInputSize((width, height))
+    _, facedetect_results = yunet.detect(image)
+
+    if not facedetect_results is None:
+        print(facedetect_results)
+        output = visualize(image, facedetect_results)
+    else:
+        output = image
+    return output
+
+
+insight_app = FaceAnalysis(allowed_modules=['detection'])
+insight_app.prepare(ctx_id=0, det_size=(640, 640))
+
+def insightface(image):
+    faces = insight_app.get(image)
+    result = insight_app.draw_on(image, faces)
+    return result
 
 
 def visualize(image, faces, print_flag=False, fps=None):
@@ -35,34 +73,13 @@ def images_facedetect(images_path, output_path):
     images = find_target_files(images_path, ('.bmp', '.dib', '.png', '.jpg', '.jpeg',
                                              '.pbm', '.pgm', '.ppm', '.tif', '.tiff'))
 
-    # Instantiate yunet
-    yunet = cv2.FaceDetectorYN.create(
-        model="./yunet.onnx",
-        config='',
-        input_size=(1920, 1080),
-        score_threshold=0.9,
-        nms_threshold=0.3,
-        top_k=5000,
-        backend_id=cv2.dnn.DNN_BACKEND_CUDA,
-        target_id=cv2.dnn.DNN_TARGET_CUDA
-    )
-
     images_count = len(images)
     progress_bar = tqdm(range(images_count), ncols=100)
     for i in progress_bar:
         sample = cv2.imread(images[i][1])
 
-        height = sample.shape[0]
-        width = sample.shape[1]
-        facedetect_results = []
-        yunet.setInputSize((width, height))
-        _, facedetect_results = yunet.detect(sample)
-
-        if not facedetect_results is None:
-            print(facedetect_results)
-            output = visualize(sample, facedetect_results)
-        else:
-            output = sample
+        # output = opencv(sample)
+        output = insightface(sample)
 
         output_image_path = os.path.join(output_path, images[i][0])
         cv2.imwrite(output_image_path, output)

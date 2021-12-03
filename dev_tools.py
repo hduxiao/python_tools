@@ -11,3 +11,14 @@ def find_target_files(dir, file_extension):
                     files_list.append((file, file_path))
     print('find target files:', files_list)
     return files_list
+
+
+def find_subdir(path):
+    dirlist = []
+    if os.path.exists(path):
+        files = os.listdir(path)
+        for file in files:
+            tmp = os.path.join(path, file)
+            if os.path.isdir(tmp):
+                dirlist.append(tmp)
+    return dirlist
