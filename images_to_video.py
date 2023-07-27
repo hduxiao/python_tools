@@ -16,32 +16,49 @@ def find_target_files(dir, file_extension):
     return files_list
 
 
+def find_subdir(path):
+    dirlist = []
+    if os.path.exists(path):
+        files = os.listdir(path)
+        for file in files:
+            tmp = os.path.join(path, file)
+            if os.path.isdir(tmp):
+                dirlist.append(tmp)
+    return dirlist
+
+
 def images_to_video(args):
-    images = find_target_files(args.input, ('.bmp', '.dib', '.png', '.jpg', '.jpeg',
-                                             '.pbm', '.pgm', '.ppm', '.tif', '.tiff'))
-    images_count = len(images)
+    subdirs = find_subdir(args.input)
+    if len(subdirs) == 0:
+        subdirs.append(args.input)
 
-    if images_count == 0:
-        print("there are no images under this path!")
-        exit()
+    for images_folder in subdirs:
+        images = find_target_files(images_folder, ('.bmp', '.dib', '.png', '.jpg', '.jpeg',
+                                                '.pbm', '.pgm', '.ppm', '.tif', '.tiff'))
+        images_count = len(images)
 
-    out_video = args.output
-    if out_video is None:
-        out_video = args.input + '.mp4'
+        if images_count == 0:
+            print("there are no images under this path!")
+            exit()
 
-    framesize = args.framesize
-    if framesize is None:
-        framesize = [320, 640]
+        out_video = args.output
+        if out_video is None:
+            out_video = images_folder + '.mp4'
 
-    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-    output_writer = cv2.VideoWriter(out_video, fourcc, args.framerate, framesize)
-    print('output video:', out_video)
+        framesize = args.framesize
+        if framesize is None:
+            image = cv2.imread(images[0][1])
+            framesize = [image.shape[1], image.shape[0]]
 
-    progress_bar = tqdm(range(images_count), ncols=100)
-    for i in progress_bar:
-        sample = cv2.imread(images[i][1])
-        sample = cv2.resize(sample, framesize, interpolation=cv2.INTER_CUBIC)
-        output_writer.write(sample)
+        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+        output_writer = cv2.VideoWriter(out_video, fourcc, args.framerate, framesize)
+        print('output video:', out_video)
+
+        progress_bar = tqdm(range(images_count), ncols=100)
+        for i in progress_bar:
+            sample = cv2.imread(images[i][1])
+            sample = cv2.resize(sample, framesize, interpolation=cv2.INTER_CUBIC)
+            output_writer.write(sample)
 
 
 def main():
