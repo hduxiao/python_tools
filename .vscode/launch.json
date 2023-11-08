@@ -4,14 +4,15 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
         {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "images_to_video.py",
+            "program": "test_onnx.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["C:\\Users\\NERO\\Desktop\\VideoLQ\\Input\\000"]
+            "args": []
         }
     ]
 }
