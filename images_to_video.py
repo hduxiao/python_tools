@@ -35,6 +35,7 @@ def images_to_video(args):
     for images_folder in subdirs:
         images = find_target_files(images_folder, ('.bmp', '.dib', '.png', '.jpg', '.jpeg',
                                                 '.pbm', '.pgm', '.ppm', '.tif', '.tiff'))
+        images.sort(key=lambda x:int(x[0].split('.')[0]))
         images_count = len(images)
 
         if images_count == 0:
